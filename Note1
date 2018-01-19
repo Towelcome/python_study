@@ -1,0 +1,1268 @@
+#! user/bin/env python
+# coding:utf-8
+
+计算机基础
+C语言：代码编译得到机器码，机器码在处理器上直接执行，没一条指令控制CPU工作。
+其他语言：代码编译得到字节码，虚拟机执行字节码并转换成机器码然后在CPU执行。
+
+python代码-字节码-机器码-计算机
+PyPy trunk代码-机器码-计算机
+
+编程语言：C、C#、java.....
+python: pypy、cpython、jpython
+
+存储知识
+    B---字节
+    K---千字节 1024B
+    M---兆字节 1024K
+    G---1024M
+    T---1024G
+    P---1024T
+
+
+linux知识
+    文件目录
+        /: 根目录，一般根目录下只存放目录，在Linux下有且只有一个根目录。素有的东西都是从这开始。当你在终端里输入'/home',你其实
+            是在告诉电脑，先从/(根目录)开始，再进入到home目录。
+        /bin、/user/bin:可执行二进制文件的目录，如常用的命令ls、tar、mv、cat等
+        /boot:防止Linux系统启动时用到的一些文件，如Linux的内核文件:/boot/vmlinuz,系统引导管理器:/boot/grub
+        /dev:存放Linux系统下的设备文件，访问该目录下某个文件，相当于访问某个设备，if 常用的是挂载光驱mount / dev / cdrom / mut:
+        /etc:系统配置文件存放的目录，不建议在该目录下存放可执行文件，重要的配置文件有/etc/initab、/etc/fstab、/etc/init.d、/etc/x11
+        /home:系统默认的用户家目录，新增用户账号时，用户的家目录都存放在此目录下，~表示当前用户的家目录，~edu表示用户edu的家目录。
+        /lib、/usr/lib、/usr/local/lib:系统使用的函数库的目录，程序在执行过程中，需要调用一些额外的参数时需要函数库的协助。
+        /lost+fount:系统异常产生错误时，会将一些遗失的片段放置于此目录下。
+        /mnt:/media:光盘默认挂载点，通常光盘挂载于/mnt/cdrom下，也不一定，可以选择任意位置进行挂载。
+        /opt:给主机额外安装软件所摆放的目录。
+        /proc:此目录的数据都在内存中，如系统核心，外部设备，网络状态，由于数据都存放于内存中，所以不占用磁盘空间，比较重要的目录
+            有/proc/cpuinfo、/proc/interrupts、/proc/dma、/proc/ioports、/proc/net/*等
+        /root:系统管理员root的家目录。
+        /sbin、/usr/sbin、/usr/local/sbin:放置系统管理员使用的可执行命令，如fdisk、shutdown、mount等。与/bin不同的是，这几个目录是给系统管理员root使用的命令，一般用户只能'查看'，而不能设置和使用。
+        /tmp:一般用户或正在执行的程序临时存放文件的目录，任何人都可以访问，重要的数据不可放置在此目录。
+        /srv:服务启动之后需要访问的数据目录，如www服务需要访问的网页数据存放在/srv/www内。
+        /usr:应用程序存放目录，/usr/bin存放应用程序，/usr/share存放共享数据，/usr/lib存放不能直接运行的，却是许多程序运行所必须一些函数库文件。/usr/local存放软件升级包，/usr/share/doc存放系统说明文件的目录。/usr/share/man:程序说明文件存放目录。
+        /var:放置系统执行过程中经常变化的文件，如随时更改的日志文件 /var/log,/var/log/message:所有的登陆文件存放目录，/var/spool/mail:邮件存放的目录，/var/run:程序或服务启动后，其PID存放在该目录下。
+
+
+    linux的基本命令
+        文件管理
+            查看文件信息
+                linux文件或者目录名称最长可以有265个字符，'.'代表当前目录，'..'表示上一层目录，以'.'开头的文件为隐藏文件，需要用 -a 参数才能显示
+                -a 显示指定目录下所有的目录与文件，包括隐藏文件
+                -l 以列表方式显示文件的详细信息
+                -h 配合 -l 以人心话的方式显示文件大小
+
+            绝对路径：/home/sihua/Desktop
+            相对路径：cd Downloads
+
+            . 表示当前路径
+            .. 表示当前路径的上一层
+
+            ls
+                ls 查看当前路径下的文件以及文件夹的名字
+                ls /bin 表示：查看根目录下的bin文件夹下的东西
+                ls Documents 表示：查看当前路径下的Documents文件夹下的所有东西
+                ls * : *表示任意多个字符，也可以没有
+                       ?表示一个任意字符，一定有一个，不能没有
+                       [xm]仅显示中括号内的任意字符
+                       [abcdefg]可以写成[a-g]:表示 从a到f之间的任意一个字符
+                \ 如果要使通配符作为普通字符使用，可以在其前面加上转义字符。'?','*'处于方括号内时不用使用转义字符就失去通配符的作用。
+                ls \*a 查找文件名为*a的文件
+
+            > : 重定向
+                ls > new.txt
+            >> : 不覆盖原内容进行重定向
+                ls >> new.txt
+
+            gedit ： gedit 文件名打开文件
+
+            more: 查看内容时，在信息过长无法在一屏上显示时，会出现快速滚屏，使得用户无法看清文件的内容，此时可以使用more命令，
+                  每次只显示一页，按下空格键可以显示下一页，按下q键退出显示，按下h键可以获取帮助
+
+            cat 查看或者合并文件内容
+                cat 文件名 打开文件在编辑器显示文件内容
+                cat 文件名  文件名 打开两个文件同时先后顺序进行内容展示
+                cat 文件1 > 文件2 将文件1(如果没有这个文件将创建一个新文件)的内容重定向到文件2中(覆盖)
+                cat 文件1 >> 文件2 将文件1(如果没有这个文件将创建一个新文件)的内容重定向到文件2中(不覆盖源文件)
+
+            grep 搜索
+                grep [-选项] '关键字' 搜索内容串 文件名
+                grep -n 'a' greptest.txt
+
+                grep -v 显示不包含匹配文本的所有行(相当于求反)
+                grep -n 显示匹配行及行号
+                grep -i 忽略大小写
+
+                grep搜索内容串可以是正则表达式
+
+            mkdir : 创建文件夹
+                mkdir a 在当前路径下创建a文件夹
+                mkdir -p 创建多层文件夹A/B/C 不能串讲...需要添加 -p 命令
+
+            rmdir : 删除目录 必须离开目录，并且目录必须为空目录，不然提示删除失败
+
+            rm : 删除文件
+                -i 以进行交互方式执行
+                -f 强制删除，忽略不存在的文件，无需提示
+                -r 递归地删除目录下的内容，删除文件夹时必须加此目录
+
+            建立链接文件：ln
+                链接文件分为软连接和赢链接
+                    软链接：软链接不占用磁盘空间，原文件删除则软链接失效
+                    硬链接：硬链接只能链接普通文件，不能链接目录
+                使用格式：
+                    ln 源文件 链接文件
+                    ln -s 源文件 链接文件
+
+                    如果没有-s，选项代表建立一个硬链接文件，两个文件占用相同大小的硬盘空间
+                    及时删除了源文件，链接文件还是存在，所以-s选项是更常见的形式
+                    注意：软过软链接文件和源文件不在同一个目录，源文件要使用绝对路径，不能
+                    使用相对路径。
+
+            tree ： 以目录树的方式显示文件夹结构
+
+            |： 管道的作用是连接多个命令
+
+            cd:跳转
+                cd Desktop 进入到Desktop这个文件夹
+                cd 文件夹名字
+                cd .. 跳转到上一层文件夹
+                cd - 表示跳转到上一次所在的路径
+                cd ~ 跳转到当前用户的家目录(/home/sigua)
+
+
+            pwd:显示当前的绝对路径(/xx/xx/xxx)
+
+            clear:清屏
+
+            tab键:用来自动补全
+
+            touch:创建一个文件，Linux中没有后缀的说法，所有文件名自定义
+
+            *:通配符，文件代表文件名中所有的字符
+
+            查看帮助文档 help
+                一般是linux命令自带的帮助信息
+                ls --help
+
+            man
+                man 是Linux提供的一个手册，包含了绝大部分的命令、函数使用的说明
+                该手册分成很多章节(section),使用man时可以指定不同的章节来浏览
+                man ls ; man 2 printf
+
+                man中各个section意义如下：
+                    1.Standard commands(标准命令)
+                    2.System calls(系统调用，如open，write)
+                    3.Library functions (库函数，如printf,fopen)
+                    4.Special devices(设备文件的说明，/dev下各种设备)
+                    5.File formats(文件格式，如passwd)
+                    6.Games and toys(游戏和娱乐)
+                    7.Miscellaneous(杂项、惯例和协定等，例如Linux档案系统、网络协定、ASCLL码
+                      environ全局变量)
+                    8.Administrative Commands(管理员命令，如ifconfig)
+
+            find 查找文件
+                find命令功能非常强大，通常用来在特定的目录下搜索负荷条件的文件，也可以用来搜索
+                特定用户属性的文件
+                find ./ -name test.sh   查找当前目录下所有名为test.sh的文件
+                find ./ -name '*.sh'   查找当前目录下所有后缀为.sh的文件
+                find ./ -name '[A-Z]*'  查找当前目录下所有以大写字母开头的文件
+                find /temp -size 2M     查找在/temp 目录下等于2M的文件
+                find /temp -size +2M    查找在/temp 目录下大于2M的文件
+                find /temp -size -2M    查找在/temp 目录下小于2M的文件
+                find ./size +4k -size -5M   查找当前目录下大于4K，小于5M的文件
+                find ./ -perm 0777      查找当前目录下权限为777的文件或目录
+                    例子：find /home/python/Desktop/ -name '0*' 查找在指定目录下以0开头的文件
+                          find ./home/python/Desktop/ -name '0*' 查找在当前目录下/home/python/Desktop/路径以0开头的文件
+
+            cp 拷贝
+                cp命令的功能是将给出的文件或目录复制到另一个文件或目录中，相当于DOS下的copy命令
+                cp -a 该选项通常在复制目录时使用，它保留链接、文件属性，并递归地复制目录，简单而言，保持文件原有属性
+                cp -f 已经存在的目标文件而不提示
+                cp -i 交互式复制，在覆盖目标文件前将给出提示要求用户确认
+                cp -r 若给出的源文件是目录文件，则cp将递归复制该目录下的所有子目录和文件，目标文件必须为一个目录名
+                cp -v 显示拷贝进度
+
+                    cp a b 将a文件夹整体复制到b文件夹下
+                    cp a/* b 将a文件夹下的所有内容复制到b文件夹下
+
+            mv 剪切/重命名
+                mv -f 禁止交互式操作，如有覆盖也不提示
+                mv -i 确认交互式操作，如果mv操作将导致对已存在的目标文件的覆盖，系统会询问是否重写，要求用户回答以避免误覆盖文件
+                mv -v 显示移动进度
+                    mv a b 将a文件夹整体移动到b文件夹下
+                    mv 01.txt 01.tzt 重命名
+
+            文件归档操作
+                tar 打包
+                    tar -cvf test.tar * 打包当前文件夹为test.tar的包
+                    tar -xvf test.tar 解test.tar包到当前文件夹
+                    tar -cvf test.tar a/* 打包a文件夹下的所有文件为test.tar包
+                gzip 压缩
+                    gzip test.tar 将名为test.tar的包进行压缩
+                    gzip -r test.tar test1.tar.gz 将名为test.tar的包进行压缩，压缩后名为test1.tar.gz
+                    gzip -d test.tar.gz 对tset.tar.gz进行解压缩
+                打包并压缩
+                    tar -zcvf test.tar.gz * 打包并压缩当前文件夹并命名为test.tar.gz
+                    tar -zxvf test.tar.gz  对名为test.tar.gz的压缩包进行解压缩并解包到当前文件夹
+
+                    tar -jcvf test.tar.bz2 * 打包并压缩当前文件夹并命名为test.tar.bz2
+                    tar -jxvf test.tar.bz2  对名为test.tar.bz2的压缩包进行解压缩并解包到当前文件夹
+
+                which 查找命令位置
+                    which ls
+
+        用户、权限管理
+            ifconfig(linux) ipconfig(windows) 查看IP地址
+            ping
+                ping IP地址 测试网络连通
+            ssh远程登陆
+                ssh python@192.168.1.104
+                ssh
+
+            who 查看当前登录的用户信息
+
+            exit：退出登陆
+
+            创建用户：
+                sudo useradd 用户名 -m -d /home/用户名
+            设置密码：
+                sudo passwd 用户名
+
+            切换用户：
+                su 用户名
+                su - 用户名  切换完用户还会直接跳转到该用户的/home目录
+            删除用户：
+                userdel 用户名 删除用户，但不会主动删除用户的主目录
+                userdel -r 用户名 删除用户，也直接删除该用户的/home目录
+
+            用户组
+                groupadd yyy 添加一个yyy用户组
+                groupdel yyy 删除yyy用户组
+
+                cat /etc/group
+                groups haha 表示：查看haha所属的所有用户组
+
+                usermod -g yyy haha 把haha添加到yyy组里面
+                usermod -a -G yyy haha 把haha添加到yyy组里面
+                -g -G,-g指定的是默认的组
+                useradd创建的新用户没有sudo 或者切换到root的权限，需要把这个用户添加到adm、sudo组里面才可以
+
+            文件权限
+
+                chmod 修改文件权限
+                    chmod 777文件夹，只会修改文件夹的权限为777，不会修改里面的权限
+                    chmod 777 123 -R 会修改文件夹里面的所有文件、文件夹的权限（递归）
+
+                    字母法：chmod u/g/o/a+/-/= rwx文件
+                    [u/g/o/a]
+
+                    u:拥有者
+                    g:同组者
+                    o:其他人
+
+                    r:读---对应的数字是4
+                    w:写---对应的数字是2
+                    x:执行---对应的数字是1
+
+                    [+ - =]
+                    + 增加权限
+                    - 减少权限
+                    = 设定权限
+
+                chown 修改文件所有者
+                    sudo chown 用户名 123.txt
+
+                chgrp 修改文件所属组
+                    sudo chgrp 组名 123.txt
+
+            系统常用命令
+                cal 查看日历
+                date 当前时间
+                修改时间 date 月日时分年.秒
+                ps -aux 查看运行进程
+                kill pid 结束pid进程
+                强制关闭 kill -9 pid
+                reboot 重启
+                shutdown -r now 重启操作系统，shutdown会给别的用户提示
+                shutdown -h now 立即关机，其中now相当于时间为0的状态
+                shutdown -h 20:25 系统将在今天的20：25关机
+                shutdown -h +10 系统再过10分钟将关机
+                init 0 关机
+                init 6 重启
+
+
+                chmod 777 文件夹，只会修改文件夹的权限为777，不会修改里面的权限
+                -R 会修改文件夹里面的所有文件、文件夹的权限（递归）
+
+            软件安装：
+                sudo apt-get install 软件安装
+                sudo apt-get update 软件更新
+                sudo apt-get remove package 删除包
+                sudo apt-search package 搜索软件包
+                sudo apt-cache show package 获取软件包的相关信息
+                sudo apt-get install package --reinstall 重新安装包
+                sudo apt-get -f install 修复安装
+                sudo apt-get remove package --purge 删除包，包括配置信息
+                sudo apt-get build-dep package 安装相关的编译环境
+
+
+
+
+            vi:
+                从命令模式---》编辑模式：i a o I A O
+                从编辑模式---》命令模式：ESC
+                从命令模式---》末尾模式：输入一个冒号，既shit+;
+
+                末尾模式：
+                    w保存
+                    q退出
+                    !强制
+
+                    常用的：
+                        wq保存退出，等价于 x(小写) 还等价于在命令模式 shit+2个z
+                        q!不保存退出
+
+                常用命令：
+                    进入插入模式：
+                        i 插入光标前一个字符
+                        I 插入行首
+                        a 插入光标后一个字符
+                        A 插入行末
+                        o 向下新开一行，插入行首
+                        O 向上新开一行，插入行首
+
+                    进入命令模式：
+                    ESC：从插入模式或行末模式进入命令模式
+
+                    移动光标：
+                        h 左移
+                        j 下移
+                        k 上移
+                        l 右移
+                        M 光标移动到中间行
+                        L 光标移动到屏幕最后一行行首
+                        G 移动到指定行，行号 -G
+                        gg 跳转到第一行
+                        w 向后一次移动一个字
+                        b 向前一次移动一个字
+                        { 按段移动，上移
+                        } 按段移动，下移
+                        ctrl-d 向下翻半屏
+                        ctrl-u 向上翻半屏
+                        ctrl-f 向下翻一屏
+                        yy 复制。 8yy:表示从当前光标所在的行开始复制
+                        p 粘贴
+                        dd 剪切。8dd:表示从当前光标所在的行开始剪切
+                        》 文本行右移
+                        《 文本行左移
+
+                    删除命令：
+                        x 删除光标后一个字符，相当于del
+                        X 删除光标前一个字符，相当于Backspace
+                        dd 删除光标所在行，n dd 删除指定的行数 D：删除光标后本行所有内容，包含光标所在
+                        d0 删除光标前本行所有内容，不包含光标所在字符
+                        dw 删除光标开始位置的字，包含光标所在字符
+
+                    撤销命令：
+                        u 撤销
+                        ctrl-r 反撤销
+
+                    可视模式：
+                        v 按字符移动，选中文本
+                        V 按行移动，选中文本可视模式可以配合d y 》 《 实现对文本块的删除 复制 左移 右移
+
+                    替换操作：
+                        r 替换当前字符
+                        R 替换当前行光标后的字符
+
+                    查找命令：
+                        /： str查找
+                        n:下一个
+                        N：上一个
+
+                    重复命令：
+                        . 重复上一次操作的命令
+
+                    替换命令：
+
+
+
+
+
+解释器
+    文件
+
+1、创建文件
+    不用中文路径
+   写代码
+    a.头部两行声明
+        #！ user/bin/python     (声明解释器)
+        # -*- coding:utf-8 -*-    (中文  python3不用加 已内置)
+    b.写功能代码
+   执行代码
+    a.打开终端-python 代码文件路径
+
+
+2、python编码
+    （1）ascii（python2.7 默认编码）
+        8位：表示出所有英文，字符，数字，2**8 = 256
+    （2）万国码unicode
+        最少用2个字节来表示：
+            1byte = 8bit = 01010101
+            2       16     0101010101010101 = 2**16
+            一个汉字：3个字节：一个字节8位
+    （3）utf-8:（python3.x 默认编码）
+        英文：8位
+        欧洲：16位
+        中文：24位
+     (4)编译:
+        计算机-机器码-字节码-python代码
+        计算机-机器码-python代码
+
+     (5)utf-8 —— unicode —— GBK
+
+     (6)变量：
+        开头只能以数字、字母、下划线
+        不能以数字开头
+        不能是python内部关键字
+
+     (7)utf-8 转成 GBK(python2.7)
+        #! python/user/bin
+        #! -*- coding:utf-8 -*-
+        temp = '李杰'
+        print temp
+        temp_unicode = temp.decode('utf-8')
+        temp_gbk = temp_unicode.encode('gbk')
+        print temp_gbk
+
+
+        utf - 8转成GBK(python3)
+        # ! python/user/bin
+        # ! -*- coding:utf-8 -*-
+        temp = '李杰'
+        print temp
+        temp_gbk = temp.encode('gbk')
+        print temp_gbk
+
+3、运算符
+    数学运算符：
+        加：a+b
+        减：a-b
+        乘：a*b
+        除：a/b
+        取余：a%b
+        取幂：a**b
+        取整除：a//b
+
+    逻辑运算符：
+        and : a and b 返回 True
+        or : a or b 返回 True
+        not : not(a and b) 返回 False
+
+    成员运算：
+        in : a in b 返回 True
+        not in : a not in b
+
+    身份运算：
+        is : a is b 返回 True
+        is not : a is not b 返回 True
+
+    for循环：
+        用户按照顺序循环可迭代对象中的内容
+        li = ['11','22','33']
+        for i in li:
+            print(i)
+
+    enumerate:
+        为可迭代的对象添加序号
+        li = ['11','22','33']
+        for k,v in li:
+            print(k,v)
+
+    range和xrange(2.7):
+        指定范围，生成指定的数字
+        range,用以获取指定范围内的数，range(0,1000)(直接在内存中创建所取的所有值)
+        xrange,用以获取指定范围内的数，xrange(0,1000)(只有在for循环时迭代，才会创建所循环到的值，可以提高运行性能)
+
+    range(3.x):
+    range等同于python2.7的xrange。指定范围，生成指定的数字
+    range, 用以获取指定范围内的数，range(0, 1000)(只有在for循环时迭代，才会创建所循环到的值，可以提高运行性能)
+
+        print range(1,10)
+        print range(1,10,2)
+        print range(30,0,-2)
+
+    index:
+        li = ['电脑','笔记本','可乐']
+        inp = input('请输入您需要的关键字：')
+        ine = li.index(inp)
+        print(ine)
+
+4、字符串方法
+
+
+5、基本数据类型
+    查看各数据类型的方法：
+        1、type
+            temp = 'alex'
+            t = type(temp)
+            print(t)
+            #str,ctrl+鼠标左，找到str类，内部的所有方法
+        2、dir
+            temp = 'alex'
+            b = dir(temp)
+        3、help,type
+            help(type(temp))
+        4、直接点击
+            temp = 'alex'
+            temp.upper()
+            鼠标放在upper上 Ctrl+左键，自动定位到upper功能处
+            鼠标放在upperCtrl
+
+    创建方式：
+
+        n1 = 123        # 根据int类，创建了一个对象
+        n2 = int(123)   # 根据int类，创建了一个对象
+        特有的功能在：
+            int类
+                功能1
+                功能2
+                功能3
+            class MyInt(object):
+                def __init__(self):
+                    print('init')
+                def __call__(self, *args, **kwargs):
+                    print('okokok')
+            obj = MyInt()
+            obj()
+
+        n1 = 123
+        n2 = 123
+        区分
+        n1 = 123
+        n1 = n2
+
+            python内部优化
+                -5 ~ 257 重复出现 会自动优化使用一个地址
+
+            查询对象的内存地址
+                id(对象)
+
+        长度限制
+            用int,超出了范围，自动使用长整形
+            32位     -2 ** 31 ~ 2 ** 31
+            64位     -2 ** 63 ~ 2 ** 31 - 1
+
+        long
+            a.长度限制
+
+
+
+
+    整数      int
+        a.
+            n1 = 123
+            n2 = 456
+            print (n1 + n2)
+
+            print(n1._add_(n2))
+        b.
+            获取可表示的二进制最短位数
+
+            n1 = 4 # 00000100
+            ret  n1.bit_length()
+            print(ret)
+
+    字符串    str
+        str -> 创建字符串，或者将其他的元素转换成字符串
+
+        s1 = 'alex'
+        无参数，创建空字符串
+        一个参数，创建普通字符串
+        两个参数，int(字节，编码) ====》
+
+        两端去除空格
+        s1.strip()
+        以...开头
+        s1.startswith()
+
+        字符、字节转换
+            bytes_list = bytes('字符串',encoding = 'utf-8')
+                utf-8 -> 3 字节
+                gbk   -> 2字节
+            print(bytes_list) # 默认每一个字节都是16进制表示
+            for b in bytes_list:
+                print(b)      # 默认每一个字节都是10进制表示
+
+            10进制的数字 ==》 2进制
+                len
+                id
+                bin(10进制的数字)
+            bytes和str的转换
+                a = '李路'
+                # 将字符串穿换成字节
+                b = bytes(a,encoding='utf-8')
+                c = bytes(a,encoding='gbk')
+                print(b)
+                print(c)
+                # 将字节转换成字符串
+                b1 = str(b,encoding='utf-8')
+                print(b1)
+                c1 = str(c,encoding='gbk')
+                print(c1)
+
+
+            x = str()
+            创建字符串
+            转换成字符串，字节，编码
+            m = bytes()
+            创建字节
+            转换成字节，字符串，要变成什么编码类型的字节
+
+        a = 'haha'
+        a = str('haha')
+
+        a.首字母大写
+            a1 = 'alec'
+            b = a1.capitalize()
+            print(b)
+        b.内容居中，两边填充
+            a1 = 'alex'
+            b = a1.center(20,'*')
+            print(b)
+        c.查找次数
+            a1 = 'alex'
+            b = a1.count('a',0,2)
+            print (b)
+
+            a = 'hello world'
+            for i in a:
+                if i == ' ':
+                    continue
+                print('%s:%d'%(i,a.count(i)))
+
+        d.查询以xx结尾
+        a1 = 'alex'
+        print(a1.endswith('e',0,3))
+        e.查询以xx开始
+        a1 = 'alex'
+        print(a1.startswith('l',1,2))
+        f.将tab转换成空格，默认一个tab转换成8个空格
+        a1 = 'alex\thaha'
+        a2 = 'alex\t\thaha' #\t加一个tab
+        print(a1.expandtabs(10))
+        print(a2.expandtabs(10))
+        g.查找子序列的位置，如果没找到，返回-1
+        a1 = 'alex'
+        print(a1.find('e'))
+        h.格式化字符串({}号里面的数字是按0-x顺序更替)
+        a1 = 'hello {0}, age {1}'
+        s = a1.format('alex',19)
+        print(s)
+        i.连接
+        a1 = ['alex','haha']
+        a = '****'.join(a1)
+        print(a)
+        j.变小写
+            lower
+        k.变大写
+            upper
+        l.左边去空格
+            lstrip
+        m.右边去空格
+            rstrip
+        n.两边去空格
+            strip
+        o.分割前、中、后三部分(分割后保存成元祖类型)
+            partition
+            name = 'jkjooppwe'
+            a = name.partition('oo')
+            print(a)
+        p.替换(从左至右,需要重新赋值)
+            replace
+            s = 'alex aa alex aa'
+            news = s.replace('aa','bb',1) #默认替换全部关键字，可以在后面限定替换个数
+            print(news)
+        q.根据关键字分割
+            name = 'jkjooppwe'
+            a = name.split('oo')
+            print(a)
+
+            name = '334 gfg jjj \t   h'
+            b = 'gggggggg'
+            a = name.split(' ')
+            print(a)
+            g = name.split()
+            print(g)
+            c = b.join(a)
+            print(c)
+            f = b.join(g)
+            print(f)
+        r.大小写转换
+            swapcase
+        s.转换成标题
+            s = 'the school'
+            ret = s.title()
+            print(ret)
+        t.索引
+            name = 'hhcc'
+            print(name[3])
+        u.切片
+            name = 'hhhhh'
+            print(name_list[0:3])
+
+            获取文件名后缀
+                filename = 'hahahapython.exe.txt'
+                a = filename.find('.')
+                print(a)
+                b = filename[12:]
+                print(b)
+                c = filename.rfind('.')
+                print(c)
+                d = filename[16:]
+                print(d)
+
+        v.len
+            name = 'hhhhh'
+            print(name[0:len(name)])
+            w.for
+            name = 'hahaha'
+            for i in name:
+                print(i)
+        x.partition 分割
+            name = 'jkjooppwe'
+            a = name.partition('oo')
+            print(a)
+        y.判断是否全是字母 isalpha
+            name = 'fdsdf'
+            a = name.isalpha()
+            print(a)
+        z.判断是否全是数字isdigit
+            name = '334'; a = name.isdigit(); print(a)
+
+
+
+    布尔值    bool
+
+    列表      list
+        可变元素的'集合'
+        创建
+            list -> 创建列表，将其他的元素转换成列表
+            li = [11,22,33,'3']
+            li = list()
+            li = list([11,22,33,'3'])
+        转换
+            字符串转换列表
+            s1 = '李路'
+            fir,字符 ==》可迭代
+            li = list(s1)# for循环，将循环的每一个元素，当作列表的元素
+            ['李','路']
+            print(li)
+
+            元祖转换列表
+                t2 = ('11','22','33')
+                t1 = list(t2)
+                print(t1)
+
+            字典转换列表
+                dic = {'k1': 'alex', 'k2': 'haha'}
+                a1 = list(dic)
+                print(a1)
+                a1 = list(dic.values())
+                print(a1)
+                a1 = list(dic.items())
+                print(a1)
+
+        列表特有的功能
+            追加
+                li.append()
+            清除
+                li.clear()
+            扩展自己，用另外一个可迭代的对象，扩充到自己内部
+                str,list,sict,tuple
+                s = '李路'
+                li.extend(s)
+                print(li)
+            翻转，自己内部元素翻转
+                li.reverse()
+            向指定位置插入指定元素
+                li.insert(1,'33')
+
+        公共功能
+            索引
+            切片
+
+
+        索引
+            name_list = ['hh','bb','cc']
+            print(name_list[0:3])
+        切片
+            name_list = ['hhhhh','ef','ttt']
+            print(name_list[0:3])
+        len
+            name_list = 'hhhhh'
+            print(name_list[0:len(name_list)])
+        for
+            name_list = ['hhhhh','gsd','esef']
+            for i in name_list:
+              print i
+
+        sort 排序
+            a = [1, 4, 5, 6, 78, 5, ]
+            a.sort()
+            print(a)
+            a.sort(reverse=True)
+            print(a)
+
+            a = [1, 4, 5, 6, 78, 5,]
+            a.sort()
+            print(a)
+            a.sort(reverse=True)
+            print(a)
+
+
+        append 添加
+            name_list = ['11','22','33']
+            name_list.append('seven')
+            name_list.append('seven')
+            print(name_list)
+        count 计数
+            name_list = ['11', '22', '33']
+            name_list.append('seven')
+            name_list.append('seven')
+            print(name_list)
+            print(namedd_list.count('seven'))
+        extend 拓展
+            name_list = ['11', '22', '33']
+            temp = ['s','1','2','4']
+            name_list.append('seven')
+            name_list.extend(temp)
+            print(name_list)
+        index 索引
+            name_list = ['11', '22', '33']
+            temp = ['s','1','2','4']
+            name_list.append('seven')
+            name_list.extend(temp)
+            print(name_list.index('4'))
+        insert 插入
+            name_list = ['11', '22', '33']
+            temp = ['s','1','2','4']
+            name_list.append('seven')
+            name_list.insert(1,'SB')
+            print(name_list)
+        pop 移除原列表中的最后一个元素，并可以将其赋值给另一个变量
+            name_list = ['11', '22', '33']
+            print(name_list)
+            name_list.pop()
+            print(name_list)
+            a1 = name_list.pop()
+            print(a1)
+            print(name_list)
+        remove 移除指定的元素
+            name_list = ['11', '22', '33']
+            print(name_list)
+            name_list.remove('22')
+            print(name_list)
+        reversed 反转
+            name_list = ['11', '22', '33']
+            print(name_list)
+            name_list.reverse()
+            print(name_list)
+
+            name_list = ['11', '22', '33']
+            print(name_list)
+            name_list.reverse()
+            print(name_list)
+
+        del 删除指定的索引位置
+            name_list = ['11', '22', '33']
+            print(name_list)
+            del name_list[0:2]
+            print(name_list)
+
+    元祖      tuple
+        元祖和列表几乎是一样的
+        列表可以修改，添加或删除元素。元祖不可修改。
+        建立单个元祖时，后面需加'，'区分元祖类型
+
+        索引
+            name_tuple = ('11','22','33')
+            print(tuple[0])
+        len
+            name_tuple = ('aa','s')
+            print(name_tuple[0])
+            print(name_tuple[len(name_tuple)-1])
+        切片
+            name_tuple = ('aa','s')
+            print(name_tuple[0:2]
+        for
+            name_tuple = ('11','22','33')
+            for i in tuple:
+                print(i)
+        count
+            name_tuple = ('11','22','33')
+            print(name_tuple)
+            print(name_tuple.count('11'))
+
+    字典 dict
+            li = [11,22,33,44]
+            tu = (11,22,33,44)
+            # 字典的每一个元素，键值对
+            user_info= {
+                'name':'alex',
+                'age':18,
+                'gender':'M'
+                }
+        索引
+            print(user_info['name'])
+            print(user_info['age'])
+        循环，默认值输出key
+            for i in user_info.keys():
+                print(i)
+        循环，循环输出值
+            for i in user_info.values():
+                print(i)
+        循环，循环输出键值对
+            for i in user_info.items():
+                print(i)
+            for k,v in user_info.item():
+                print(k,v)
+        获取所有的键
+            print(user_info.keys())
+        获取所有的值
+            print(user_info.values())
+        获取所有的键值对
+            print(user_info.items())
+        clear 清楚所有内容
+            user_info.clear()
+            print(user_info)
+        get 根据key获取值，如果key不存在，可以指定一个默认值
+            val = user_info.get('age')
+            print(val)
+            val = user_info.get('age11')
+            print(val)
+
+            指定返回值
+            myinfo = {'bq':1,'qp':2,'rr':3}
+            p = myinfo.get('b','不知道')
+            print(p)
+
+
+        索引取值时，如果key不存在，会报错
+            print(user_info['age'])
+            print(user_info['age111'])
+        检查字典中指定key是否存在
+            user_info = {
+                'name': 'alex',
+                'age': 18,
+                'gender': 'M'
+            }
+            print('name' in user_info.keys())
+            print('name' in user_info.values())
+            print('name' in user_info)
+        update
+
+
+
+
+
+        ========================查询系统=============================
+        xt = ['a','b','c','d','e','f']
+        a = True
+        while a :
+            print('='*30)
+            print('欢迎使用查询系统')
+            print('1、添加新名字')
+            print('2、删除一个名字')
+            print('3、修改一个名字')
+            print('4、查询一个名字')
+            print('0、退出查询系统。')
+            print('='*30)
+            key = input('请输入您的选择：')
+            if key == '1':
+                new_name = input('请输入您要添加的名字:')
+                xt.append(new_name)
+                print('新添加名字：%s'%new_name)
+                xunwen = input('您还需要继续操作吗？ y/n')
+                if xunwen is 'y':
+                    continue
+                else:
+                    continue
+            elif key == '2':
+                del_name = input('请输入您要删除的名字：')
+                if del_name in xt:
+                    xt.remove(del_name)
+                    print('%s 已删除名字：%s'%(xt,del_name))
+                    xunwen = input('您还需要继续操作吗？ y/n')
+                    if xunwen is 'y':
+                        continue
+                    else:
+                        continue
+                else:
+                    i = 0
+                    while i < 3:
+                        re_del_name = input('对不起！您输入的名字不存在！请重新输入:(输入no退出)')
+                        if re_del_name == 'no':
+                            break
+                        elif re_del_name in xt:
+                            xt.remove(re_del_name)
+                            print('已删除名字：%s' % re_del_name)
+                            xunwen = input('您还需要继续操作吗？ y/n')
+                            if xunwen is 'y':
+                                continue
+                            else:
+                                break
+                        else:
+                            i += 1
+                            if i == 3:
+                                print('对不起！您输入的次数太频繁，请稍后再尝试！')
+                            continue
+            elif key == '3':
+                i = 0
+                while i < 3:
+                    xxg = input('请输入您要修改的名字：')
+                    if xxg in xt:
+                        yxg = input('符合修改条件，请输入您想要修改成什么名字：')
+                        l = xt.index(xxg)
+                        xt[l] = yxg
+                        print(xt)
+                        xunwen = input('已修改完成！您还需要继续操作吗？ y/n')
+                        if xunwen is 'y':
+                            continue
+                        else:
+                            break
+                    else:
+                        i = 0
+                        while i < 3:
+                            re_del_name = input('对不起！您输入的名字不存在！请重新输入：(输入no退出)')
+                            if re_del_name == 'no':
+                                break
+                            elif re_del_name in xt:
+                                xt.remove(re_del_name)
+                                print('已删除名字：%s' % re_del_name)
+                                xunwen = input('您还需要继续操作吗？ y/n')
+                                if xunwen is 'y':
+                                    break
+                                else:
+                                    break
+                            else:
+                                i += 1
+                                if i == 3:
+                                    print('对不起！您输入的次数太频繁，请稍后再尝试！')
+                                continue
+            elif key == '4':
+                    chaxun = input('请输入您要查询的名字：')
+                    if chaxun in xt:
+                        print('系统已找到！')
+                        xunwen = input('您还需要进行操作吗？y/n')
+                        if xunwen == 'y':
+                            continue
+                        else:
+                            break
+                    else:
+                        i = 0
+                        while i < 3:
+                            re_input = input('您输入的名字未找到！请重新输入：(输入no退出)')
+                            if re_input == 'no':
+                                break
+                            elif re_input in xt:
+                                print('系统已找到！')
+                                xunwen = input('您还需要进行操作吗？y/n')
+                                if xunwen == 'y':
+                                    break
+                                else:
+                                    break
+                            else:
+                                i += 1
+                                if i == 3:
+                                    print('您输入的次数太频繁，请稍后再输入！')
+                                continue
+            elif key == '0':
+                break
+
+
+        累加
+        sum = 0
+        for i in [1,2,3,4,5,6,7,8]:
+            sum = sum + i
+            print(sum)
+        print(sum)
+
+        list = range(1,101)
+        sum = 0
+        for i in list:
+            sum += i
+            print(sum)
+        print(sum)
+
+        计算任意次方
+        def r(x,y=2):#默认参数为2
+            s = 1
+            while y > 0:
+                s = s*x
+                y -= 1
+            return s
+        a = int(input('请输入：'))
+        b = int(input('请输入：'))
+        print(r(5,3))
+
+
+
+    函数
+        定义函数时，需要确定函数名和参数个数；
+        如果有必要，可以先对参数的数据类型做检查；
+        函数体内部可以用return随时返回函数结果；
+        函数执行完毕也没有return语句时，自动return None。
+        函数中的return被执行后，自动结束。
+        函数可以同时返回多个值，但其实就是一个tuple
+
+        默认参数必须指向不变对象！
+            def add_end(L=[]):
+                L.append('END')
+                return L
+            多次调用后：
+                >>> add_end()
+                ['END', 'END']
+                >>> add_end()
+                ['END', 'END', 'END']
+
+
+            def r(x,y=2):#默认参数为2
+                s = 1
+                while y > 0:
+                    s = s*x
+                    y -= 1
+                return s
+            a = int(input('请输入：'))
+            b = int(input('请输入：'))
+            print(r(5,3))
+
+        定义一个函数：
+            def my_abs(x):
+                if x >= 0:
+                    return x
+                else:
+                    return -x
+
+            空函数可以作为占位符
+
+            #定义阶乘函数
+            def jc(x):
+                i = 1
+                q = 0
+                while i <= x:
+                    q = q + i
+                    i += 1
+                print(q)
+            jc(100)
+
+            #调用可变参数执行
+            def calc(*numbers):
+                sum = 0
+                for n in numbers:
+                    sum = sum + n * n
+                return sum
+            p = calc(1,2,3,4)
+            print(p)
+
+            #参数类型做检查
+            def my_abs(x):
+                if not isinstance(x, (int, float)):
+                    raise TypeError('bad operand type')
+                if x >= 0:
+                    return x
+                else:
+                    return -x
+
+
+        位置参数
+            我们先写一个计算x2的函数：
+            def power(x):
+                return x * x
+
+        默认参数        定义默认参数牢记：默认参数必须指向不变对象！
+            def power(x, n=2):
+                s = 1
+                while n > 0:
+                    n = n - 1
+                    s = s * x
+                return s
+
+        可变参数
+            def calc(*numbers):
+                sum = 0
+                for n in numbers:
+                    sum = sum + n * n
+                return sum
+
+        关键字参数
+            def person(name, age, **kw):
+                print('name:', name, 'age:', age, 'other:', kw)
+            person('Bob', 35, city='Beijing')
+            person('Adam', 45, gender='M', job='Engineer')
+
+            检查传入的关键字参数：
+            def person(name, age, **kw):
+                if 'city' in kw:
+                    # 有city参数
+                    pass
+                if 'job' in kw:
+                    # 有job参数
+                    pass
+                print('name:', name, 'age:', age, 'other:', kw)
+
+        命名关键字参数
+            def person(name, age, *, city, job):
+                print(name, age, city, job)
+            person('Jack', 24, city='Beijing', job='Engineer')
+
+        参数定义的顺序必须是：必选参数、默认参数、可变参数、命名关键字参数和关键字参数。
+
+
+        方法：
+            cmp(item1,item2) 比较两个值
+            len(item) 计算容器内元素的个数
+            max(item) 返回容器内元素最大值
+            min(item) 返回容器内元素最小值
+            del(item) 删除变量
+
+
+
+
+5、用户交互
+    input():假设输入的内容都是合法的python表达式
+    raw_input():将所有的输入内容当作原始数据放进字符串中
+    getpass模块：将输入内容隐藏
+        #！ /user/bin/python
+        #! -*- coding:utf-8 -*-
+        import getpass
+        a=raw_input("name:")
+        b=raw_input("pwd:")
+        print a
+        print b
+
+    random
+        random.randint(1,2)
+
+
+        随机分配
+        import random
+        office = [[],[],[]]
+        teacher = ['a','b','c','d','e','f','g']
+        t = 0
+        while t <= 7:
+        for i in teacher:
+            r = random.randint(0, 2)
+            office[r].append(i)
+            print(office)
+            t += 1
+        print(office)
+        for i in office:
+            print(i)
+        print('办公室1的人数为：%d  %s'%(len(office[0]),office[0]))
+        print('办公室2的人数为：%d  %s'%(len(office[1]),office[1]))
+        print('办公室3的人数为：%d  %s'%(len(office[2]),office[2]))
+
+
+
+
